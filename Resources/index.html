@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+        <title>飞信(@月明沧海)</title>
+        <script src="view/js/dojo.js" charset="utf-8" type="application/javascript"  ></script>
+        <script src="view/js/feixin.js" charset="utf-8" type="application/javascript" ></script>
+    </head>
+    <body>
+      <form action='/login' method='post' id="login_form">
+        <LABEL for='UserName' >手机或飞信号:</LABEL><input name='UserName' type='text' />
+        <LABEL for='Pwd' >密码:</LABEL><input name='Pwd' type='password'/>
+        <LABEL for='Ccp' >验证码:</LABEL><input name='Ccp' type='text' />
+        <img onclick='window.location.reload(true)'  src='/get_code_img' />
+        <input id="login" type='submit' value='登录飞信'/>
+     </form>
+     
+     <div id="login_succ" style="display:none;" >登陆成功。加载个人信息...</div>
+     <div id="user_info" style="display:none;">
+        <div>姓名：<span id="name"></span></div>
+        <div>个性签名：<span id="nick_name"></span></div>
+        <div>飞信号码：<span id="sid"></span></div>
+     </div>
+     <div id="loading" style="display:none;" >加载联系人列表...</div>
+     <ul id="contact_list" >
+     </ul>
+     <div id="chatwindow" style="display:none;width:300px;height:400px;border:solid 1px red;position:absolute;top:100px;left:500px;">
+        <div id="peer"></div>
+        <div style="border:1px solid yellow;width:100%;height:80%;overflow:scroll;">
+            <ul id="chat_history"></ul>
+        </div>
+        <textarea value="" id="chat_content" style="width:100%;height:15%;" ></textarea>
+        <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span><em>(最多<strong>180</strong>字)</em><button id="send_msg">发 送</button>
+     </div>
+    <script>
+        function httpGet(url) {
+                if (Titanium.Network.online) {
+                    var localFile = Titanium.Filesystem.createTempFile();
+                    console.log("localFile:",localFile,localFile.toURL());
+                    var httpClient = Titanium.Network.createHTTPClient();
+                    httpClient.setTimeout(10000);
+                
+                    httpClient.onload = function(e) {
+                        var writeFile = Titanium.Filesystem.getFile(localFile);
+                        var writeStream = Titanium.Filesystem.getFileStream(writeFile);
+                        writeStream.open(Titanium.Filesystem.MODE_WRITE);
+                        writeStream.write(this.responseData);
+                        writeStream.close();
+                        
+                        var cookie = this.getResponseHeader('set-cookie');//.split(';')[0]
+                        
+                        console.log("ccpsession:",cookie);
+                    };
+                
+                    // Handle state change
+                    httpClient.onreadystatechange = function(e) {
+                        if (e.readyState == 4) {
+                            // Download finished
+                        }
+                    };
+                
+                    // Handle error event
+                    httpClient.onerror = function(e) {
+                        console.log('HTTP error!');
+                    };
+                
+                    httpClient.open('GET', url); 
+                    httpClient.send();
+                } 
+            }
+            httpGet('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession');
+    </script>
+  </body>
+</html>
