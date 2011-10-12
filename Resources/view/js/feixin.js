@@ -9,7 +9,7 @@ dojo.addOnLoad(function () {
 
     }
     
-    Notifier.prototype.Notify = function (icon, title, body,timeout,callback) {
+    Notifier.prototype.notify = function (icon, title, body,timeout,callback) {
         var popup = Titanium.Notification.createNotification(Titanium.UI.createWindow());
         popup.setIcon(icon);
         popup.setTitle(title);
@@ -55,6 +55,7 @@ dojo.addOnLoad(function () {
                 })
             });
         },
+        ccpsession:'',
         sid: '',
         name:'',
         //当前登陆用户的飞信号
@@ -170,7 +171,7 @@ dojo.addOnLoad(function () {
                                 if (item.DataType === 3 && item.Data) {
                                     var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " 对你说： " + item.Data.msg + " (" +(new Date()).toString() + ")";
                                     try {
-                                        notifier.Notify(me.icons[item.Data.fromUid] || (window.location.href + "images/feixin.png"), "飞信新消息:", msg);
+                                        notifier.notify(me.icons[item.Data.fromUid] || (window.location.href + "images/feixin.png"), "飞信新消息:", msg);
                                     } catch (e) {
                                         alert(msg);
                                     }
@@ -203,9 +204,9 @@ dojo.addOnLoad(function () {
                 }
                 console.log(data);
                 if (data.rc === 200) {
-                    notifier.Notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送成功！');
+                    notifier.notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送成功！');
                 }else{
-                    notifier.Notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送失败！请重新发送。');
+                    notifier.notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送失败！请重新发送。');
                 }
             });
         },
@@ -343,9 +344,12 @@ dojo.addOnLoad(function () {
 
         }
     };
-
     dojo.connect(dojo.byId('login'), 'click', WebFetion, 'login');
-
+    dojo.subscribe("ccpsession", function(message){
+        console.log("ccpsession:",message.ccpsession);
+        WebFetion.ccpsession = message.ccpsession;
+    });
+    
     if (window.localStorage) {
         var elements = dojo.byId('login_form').elements;
         elements['UserName'].value = window.localStorage.getItem('name') || "";

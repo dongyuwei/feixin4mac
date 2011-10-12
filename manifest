@@ -1,10 +1,10 @@
 #appname:fetion
-#appid:session.im
-#publisher:ilfe
+#appid:feixin4mac
+#publisher:dongyuwei
 #image:default_app_logo.png
 #url:session.im
 #guid:0bd989b3-64c5-4bd7-9f5a-b22f5e3b2fec
-#desc:No description provided
+#desc:飞信 for mac
 #type:desktop
 runtime:1.0.0
 api:1.0.0
@@ -14,7 +14,6 @@ tiapp:1.0.0
 tifilesystem:1.0.0
 tiplatform:1.0.0
 tiui:1.0.0
-ruby:1.0.0
 ticodec:1.0.0
 tidatabase:1.0.0
 tidesktop:1.0.0

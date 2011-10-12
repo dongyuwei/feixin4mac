@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <ti:app xmlns:ti='http://ti.appcelerator.org'>
 <!-- These values are edited/maintained by Titanium Developer -->
-<id>session.im</id>
+<id>feixin4mac</id>
 <name>fetion</name>
 <version>1.0</version>
-<publisher>ilfe</publisher>
+<publisher>dongyuwei</publisher>
 <url>session.im</url>
 <icon>default_app_logo.png</icon>
-<copyright>2011 by ilfe</copyright>
+<copyright>2011 by dongyuwei</copyright>
 <!-- Window Definition - these values can be edited -->
 <window>
 <id>initial</id>

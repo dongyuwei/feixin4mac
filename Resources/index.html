@@ -11,7 +11,7 @@
         <LABEL for='UserName' >手机或飞信号:</LABEL><input name='UserName' type='text' />
         <LABEL for='Pwd' >密码:</LABEL><input name='Pwd' type='password'/>
         <LABEL for='Ccp' >验证码:</LABEL><input name='Ccp' type='text' />
-        <img onclick='window.location.reload(true)'  src='/get_code_img' />
+        <img id="login_code" onclick='window.location.reload(true)'  />
         <input id="login" type='submit' value='登录飞信'/>
      </form>
      
@@ -33,42 +33,37 @@
         <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span><em>(最多<strong>180</strong>字)</em><button id="send_msg">发 送</button>
      </div>
     <script>
-        function httpGet(url) {
-                if (Titanium.Network.online) {
-                    var localFile = Titanium.Filesystem.createTempFile();
-                    console.log("localFile:",localFile,localFile.toURL());
-                    var httpClient = Titanium.Network.createHTTPClient();
-                    httpClient.setTimeout(10000);
-                
-                    httpClient.onload = function(e) {
-                        var writeFile = Titanium.Filesystem.getFile(localFile);
-                        var writeStream = Titanium.Filesystem.getFileStream(writeFile);
-                        writeStream.open(Titanium.Filesystem.MODE_WRITE);
-                        writeStream.write(this.responseData);
-                        writeStream.close();
-                        
-                        var cookie = this.getResponseHeader('set-cookie');//.split(';')[0]
-                        
-                        console.log("ccpsession:",cookie);
-                    };
-                
-                    // Handle state change
-                    httpClient.onreadystatechange = function(e) {
-                        if (e.readyState == 4) {
-                            // Download finished
-                        }
-                    };
-                
-                    // Handle error event
-                    httpClient.onerror = function(e) {
-                        console.log('HTTP error!');
-                    };
-                
-                    httpClient.open('GET', url); 
-                    httpClient.send();
-                } 
-            }
-            httpGet('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession');
+        (function(url) {
+            var path = Titanium.Filesystem.getUserDirectory().toString() + Titanium.Filesystem.getSeparator() + 'code.jpeg';
+            var request = Titanium.Network.createHTTPClient();
+            request.setTimeout(10000);
+        
+            request.onload = function(e) {
+                var file = Titanium.Filesystem.getFile(path);
+                var stream = Titanium.Filesystem.getFileStream(file);
+                stream.open(Titanium.Filesystem.MODE_WRITE);
+                stream.write(this.responseData);
+                stream.close();
+                dojo.byId('login_code').src = 'file:///' + path;
+                dojo.publish("ccpsession", [{
+                    ccpsession : this.getResponseHeader('set-cookie')
+                }]);
+            };
+            
+            // Handle state change
+            request.onreadystatechange = function(e) {
+                if(e.readyState === 4) {
+                    // Download finished
+                }
+            };
+            
+            request.onerror = function(e) {
+                console.log('HTTP error!');
+            };
+            request.open('GET', url);
+            request.send();
+        })('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession');
+
     </script>
   </body>
 </html>
