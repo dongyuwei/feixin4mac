@@ -33,31 +33,7 @@
         <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span><em>(最多<strong>180</strong>字)</em><button id="send_msg">发 送</button>
      </div>
     <script>
-        (function(url) {
-            var path = Titanium.Filesystem.getUserDirectory().toString() + Titanium.Filesystem.getSeparator() + 'code.jpeg';
-            var request = Titanium.Network.createHTTPClient();
-            request.setTimeout(10000);
-            request.receive(function(data) {
-                var file = Titanium.Filesystem.getFile(path);
-                var stream = Titanium.Filesystem.getFileStream(file);
-                stream.open(Titanium.Filesystem.MODE_WRITE);
-                stream.write(data);
-                stream.close();
-                dojo.byId('login_code').src = 'file:///' + path;
-                dojo.byId('login').disabled = false;
-                dojo.publish("ccpsession", [{
-                    ccpsession : request.getResponseHeader('set-cookie')
-                }]);
-            });
         
-            request.onerror = function(e) {
-                console.log('HTTP error!');
-            };
-            request.open('GET', url);
-            request.send();
-        })('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession');
-
-
     </script>
   </body>
 </html>

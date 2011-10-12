@@ -23,6 +23,29 @@ dojo.addOnLoad(function () {
     }
 
     var WebFetion = {
+        loadImage:function(url){
+            var path = Titanium.Filesystem.getUserDirectory().toString() + Titanium.Filesystem.getSeparator() + 'code.jpeg';
+            var request = Titanium.Network.createHTTPClient();
+            request.setTimeout(10000);
+            var me = this;
+            request.onerror = function(e) {
+                console.log('error when loadImage:',e);
+            };
+            if (request.open('GET', url)) {
+                request.receive(function(data) {
+                    var file = Titanium.Filesystem.getFile(path);
+                    var stream = Titanium.Filesystem.getFileStream(file);
+                    stream.open(Titanium.Filesystem.MODE_WRITE);
+                    stream.write(data);
+                    stream.close();
+                    dojo.byId('login_code').src = 'file:///' + path;
+                    dojo.byId('login').disabled = false;
+                    me.ccpsession = request.getResponseHeader('set-cookie');
+                    console.log('ccpsession:',me.ccpsession);//如果没有catch住"访问未定义的js变量"这种错误就能使Titanium崩溃
+                    request = null;
+                });
+            }
+        },
         login: function (e) {
             dojo.stopEvent(e);
             dojo.xhrPost({
@@ -345,10 +368,7 @@ dojo.addOnLoad(function () {
         }
     };
     dojo.connect(dojo.byId('login'), 'click', WebFetion, 'login');
-    dojo.subscribe("ccpsession", function(message){
-        console.log("ccpsession:",message.ccpsession);
-        WebFetion.ccpsession = message.ccpsession;
-    });
+    WebFetion.loadImage('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession&'+ Math.random());
     
     if (window.localStorage) {
         var elements = dojo.byId('login_form').elements;
