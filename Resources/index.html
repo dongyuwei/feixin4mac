@@ -12,7 +12,7 @@
         <LABEL for='Pwd' >密码:</LABEL><input name='Pwd' type='password'/>
         <LABEL for='Ccp' >验证码:</LABEL><input name='Ccp' type='text' />
         <img id="login_code" onclick='window.location.reload(true)'  />
-        <input id="login" type='submit' value='登录飞信'/>
+        <input id="login" type='submit' disabled value='登录飞信'/>
      </form>
      
      <div id="login_succ" style="display:none;" >登陆成功。加载个人信息...</div>
@@ -37,32 +37,26 @@
             var path = Titanium.Filesystem.getUserDirectory().toString() + Titanium.Filesystem.getSeparator() + 'code.jpeg';
             var request = Titanium.Network.createHTTPClient();
             request.setTimeout(10000);
-        
-            request.onload = function(e) {
+            request.receive(function(data) {
                 var file = Titanium.Filesystem.getFile(path);
                 var stream = Titanium.Filesystem.getFileStream(file);
                 stream.open(Titanium.Filesystem.MODE_WRITE);
-                stream.write(this.responseData);
+                stream.write(data);
                 stream.close();
                 dojo.byId('login_code').src = 'file:///' + path;
+                dojo.byId('login').disabled = false;
                 dojo.publish("ccpsession", [{
-                    ccpsession : this.getResponseHeader('set-cookie')
+                    ccpsession : request.getResponseHeader('set-cookie')
                 }]);
-            };
-            
-            // Handle state change
-            request.onreadystatechange = function(e) {
-                if(e.readyState === 4) {
-                    // Download finished
-                }
-            };
-            
+            });
+        
             request.onerror = function(e) {
                 console.log('HTTP error!');
             };
             request.open('GET', url);
             request.send();
         })('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession');
+
 
     </script>
   </body>
