@@ -40,7 +40,7 @@ dojo.addOnLoad(function () {
                     stream.close();
                     dojo.byId('login_code').src = 'file:///' + path;
                     dojo.byId('login').disabled = false;
-                    me.ccpsession = request.getResponseHeader('set-cookie');
+                    me.ccpsession = request.getResponseHeader('set-cookie').split(';')[0];
                     console.log('ccpsession:',me.ccpsession);//如果没有catch住"访问未定义的js变量"这种错误就能使Titanium崩溃
                     request = null;
                 });
@@ -48,34 +48,22 @@ dojo.addOnLoad(function () {
         },
         login: function (e) {
             dojo.stopEvent(e);
-            dojo.xhrPost({
-                form: 'login_form',
-                load: dojo.hitch(this, function (json) {
-                    window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
-                    window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
-
-                    var data;
-                    try {
-                        data = dojo.fromJson(json);
-                    } catch (e) {
-                        try {
-                            data = dojo.fromJson('' + json + '')
-                        } catch (e) {
-                            window.location.reload();
+            console.log(dojo.formToQuery('login_form'));
+            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{OnlineStatus:400}), dojo.hitch(this, function (json) {
+                console.log('json:',json,typeof json);
+                window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
+                window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
+                if (json.rc === 200) {
+                    dojo.fadeOut({
+                        node: "login_form",
+                        onEnd: function () {
+                            dojo.style("login_succ", "display", "");
                         }
-                    }
-                    console.log(data);
-                    if (data.rc === 200) {
-                        dojo.fadeOut({
-                            node: "login_form",
-                            onEnd: function () {
-                                dojo.style("login_succ", "display", "");
-                            }
-                        }).play();
-
-                        this.get_personal_info();
-                    }
-                })
+                    }).play();
+                    //this.get_personal_info();
+                }
+            }),{
+                'Cookie':this.ccpsession
             });
         },
         ccpsession:'',
@@ -243,7 +231,8 @@ dojo.addOnLoad(function () {
                 }
             });
         },
-        post: function (url, data, callback) {
+        post: function (url, data, callback,headers) {
+            headers = headers || {};
             dojo.xhrPost({
                 url: url,
                 handleAs: 'json',
@@ -251,10 +240,12 @@ dojo.addOnLoad(function () {
                 content: data,
                 error: function () {
                     console.error(arguments);
-                }
+                },
+                headers: dojo.mixin({ "Content-Type":"application/x-www-form-urlencoded; charset=utf-8" },headers)
             });
 
         },
+        
         template: function (tmpl, data) {
             return tmpl.replace(/(#\{(.*?)\})/g, function () {
                 return data[arguments[2]] || "";
@@ -370,9 +361,17 @@ dojo.addOnLoad(function () {
     dojo.connect(dojo.byId('login'), 'click', WebFetion, 'login');
     WebFetion.loadImage('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession&'+ Math.random());
     
+    dojo.byId('login_form').elements['UserName'].value = '';
+    dojo.byId('login_form').elements['Pwd'].value = '';
+    
     if (window.localStorage) {
         var elements = dojo.byId('login_form').elements;
-        elements['UserName'].value = window.localStorage.getItem('name') || "";
-        elements['Pwd'].value = window.localStorage.getItem('pwd') || ""
+        if(window.localStorage.getItem('name')){
+            elements['UserName'].value = window.localStorage.getItem('name');
+        } 
+        if(window.localStorage.getItem('pwd')){
+            elements['Pwd'].value = window.localStorage.getItem('pwd') ;
+        }
+        
     }
 });
