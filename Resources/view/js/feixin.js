@@ -21,11 +21,13 @@ dojo.addOnLoad(function () {
         popup.show();
         return true;
     }
-
+    var notifier = new Notifier();
+    
     var WebFetion = {
         ccpsession:'',
         ssid : '',
         sid: '',
+        uid: '',
         name:'',
         version : 0,
         loadImage:function(url){
@@ -85,7 +87,7 @@ dojo.addOnLoad(function () {
                     dojo.byId('nick_name').innerHTML = rv.i;
                     dojo.byId('sid').innerHTML = rv.sid;
                     me.sid = rv.sid;
-
+                    me.uid = rv.uid;//发短信需要
                     dojo.style("loading", "display", "");
                     me.get_contact_list();
                 }
@@ -94,7 +96,7 @@ dojo.addOnLoad(function () {
         },
         get_contact_list: function () {
             var me = this;
-            me.post('https://webim.feixin.10086.cn//WebIM/GetContactList.aspx?Version=' + me.version, {ssid:me.ssid}, function (data) {
+            me.post('https://webim.feixin.10086.cn/WebIM/GetContactList.aspx?Version=' + me.version, {ssid:me.ssid}, function (data) {
                 console.log(data);
                 if (data.rc === 200) {
                     dojo.style("loading", "display", "none");
@@ -109,7 +111,7 @@ dojo.addOnLoad(function () {
                     });
                     dojo.byId('contact_list').style.cssText = "width:300px;overflow:hidden;border:solid 1px #1693A5; "
 
-                    //me.keep_alive();
+                    me.keep_alive();
                 }
             });
             me.version = me.version + 1;
@@ -127,85 +129,73 @@ dojo.addOnLoad(function () {
         },
         contacts: {},
         icons:{},
-        //keep alive through websocket
-        keep_alive: function () {
-            if (window.WebSocket) {
-                var me = this;
-                var ws = new WebSocket("ws://host:7777".replace('host', window.location.hostname));
-                ws.onopen = function () {
-                    console.log('socket opened');
-                    ws.send('keep-alive');
-                };
-                ws.onmessage = function (evt) {
-                    var json = evt.data;
-                    if (json) {
-                        var data;
-                        try {
-                            data = dojo.fromJson(json);
-                        } catch (e) {
-                            data = dojo.fromJson('' + json + '');
-                        }
-                        console.log("ws.onmessage", data);
-                        if (data && data.rc === 200) {
-                            var rv = data.rv;
-                            dojo.forEach(rv, function (item) {
-                                if (item.DataType === 2 && item.Data) {
-                                    dojo.forEach(document.getElementsByName(item.Data.uid), function (dom) {
-                                        if (me.status[item.Data.pb] !== undefined) {
-                                            dom.innerHTML = " --- " + me.status[item.Data.pb];
-                                        }
-                                        //i是签名，nn是名称，mn手机号
-                                        dom.parentNode.title = [item.Data.i, item.Data.mn, item.Data.uri].join(" ");
-                                        if (item.Data.nn) {
-                                            me.contacts[item.Data.uid] = item.Data.nn;
-                                            dom.parentNode.children[0].innerHTML = item.Data.nn;
-                                            dom.parentNode.setAttribute("nick", item.Data.nn);
-                                        }
-                                        if (item.Data.crc) {
-                                            var img = document.createElement("img");
-                                            me.icons[item.Data.uid] = img.src = me.template("http://webim.feixin.10086.cn/WebIM/GetPortrait.aspx?did=#{uid}&Size=3&Crc=#{crc}&mid=#{uid}", {
-                                                uid: item.Data.uid,
-                                                crc: item.Data.crc
-                                            });
-                                            img.style.cssText = "width:20px;height:20px;";
-                                            dom.parentNode.insertBefore(img, dom.parentNode.children[0]);
-                                        }
-                                    });
+        logout:false,
+        keep_alive:function(){
+            var me = this;
+            me.post('https://webim.feixin.10086.cn/WebIM/GetConnect.aspx?Version=' + me.version, {ssid:me.ssid}, function (data) {
+                console.log(data);
+                if (data && data.rc === 200) {
+                    var rv = data.rv;
+                    dojo.forEach(rv, function (item) {
+                        if (item.DataType === 2 && item.Data) {
+                            dojo.forEach(document.getElementsByName(item.Data.uid), function (dom) {
+                                if (me.status[item.Data.pb] !== undefined) {
+                                    dom.innerHTML = " --- " + (item.Data.pd || me.status[item.Data.pb]);
                                 }
-                                if (item.DataType === 3 && item.Data) {
-                                    var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " 对你说： " + item.Data.msg + " (" +(new Date()).toString() + ")";
-                                    try {
-                                        notifier.notify(me.icons[item.Data.fromUid] || (window.location.href + "images/feixin.png"), "飞信新消息:", msg);
-                                    } catch (e) {
-                                        alert(msg);
-                                    }
-                                    me.save_history(item.Data.fromUid, msg);
-                                    me.show_chat_dialog(item.Data.fromUid, me.contacts[item.Data.fromUid] || item.Data.fromUid);
+                                //i是签名，nn是名称，mn手机号
+                                dom.parentNode.title = [item.Data.i, item.Data.mn, item.Data.uri].join(" ");
+                                if (item.Data.nn) {
+                                    me.contacts[item.Data.uid] = item.Data.nn;
+                                    dom.parentNode.children[0].innerHTML = item.Data.nn;
+                                    dom.parentNode.setAttribute("nick", item.Data.nn);
+                                }
+                                if (item.Data.crc) {
+                                    var img = document.createElement("img");
+                                    me.icons[item.Data.uid] = img.src = me.template("http://webim.feixin.10086.cn/WebIM/GetPortrait.aspx?did=#{uid}&Size=3&Crc=#{crc}&mid=#{uid}", {
+                                        uid: item.Data.uid,
+                                        crc: item.Data.crc
+                                    });
+                                    img.style.cssText = "width:20px;height:20px;";
+                                    dom.parentNode.insertBefore(img, dom.parentNode.children[0]);
                                 }
                             });
                         }
+                        if (item.DataType === 3 && item.Data) {
+                            console.log("new msg:",item.Data.msg);
+                            var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " 对你说： " + item.Data.msg + " (" + (new Date()).toString() + ")";
+                            try {
+                                notifier.notify(me.icons[item.Data.fromUid] || (window.location.href + "images/feixin.png"), "飞信新消息:", msg);
+                            } catch (e) {
+                                alert(msg);
+                            }
+                            me.save_history(item.Data.fromUid, msg);
+                            me.show_chat_dialog(item.Data.fromUid, me.contacts[item.Data.fromUid] || item.Data.fromUid);
+                        }
+                        if (item.DataType === 4 && item.Data) {
+                            if(item.Data.ec === 900){
+                                me.logout = true;
+                                notifier.notify('','错误提示:','该用户在其它客户端登录');
+                            }else{
+                                notifier.notify('','错误提示:',item.Data.emsg);
+                            }
+                        }
+                    });
+                }
+                setTimeout(function(){
+                    if(!me.logout){
+                        me.keep_alive();
                     }
-                };
-                ws.onerror = function () {
-                    console.info(arguments)
-                };
-                ws.onclose = function () {
-                    console.log('socket closed');
-                };
-            }
+                },100);
+            });
+            me.version = me.version + 1;
         },
         send_msg: function (to, msg, isSendSms) {
-            this.post('send_msg', {
-                'to': to,
+            this.post('https://webim.feixin.10086.cn/WebIM/SendMsg.aspx?Version=' + this.version, {
+                'To': to,
                 'msg': msg,
-                'isSendSms': isSendSms ? '1' : '0'
-            }, function (json) {
-                var data;
-                try {
-                    data = dojo.fromJson(json);
-                } catch (e) {
-                    data = dojo.fromJson('' + json + '');
-                }
+                'ssid':this.ssid,
+                'IsSendSms': isSendSms ? '1' : '0'
+            }, function (data) {
                 console.log(data);
                 if (data.rc === 200) {
                     notifier.notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送成功！');
@@ -213,6 +203,23 @@ dojo.addOnLoad(function () {
                     notifier.notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送失败！请重新发送。');
                 }
             });
+            this.version = this.version + 1;
+        },
+        send_sms: function (to, msg, isSendSms) {
+            this.post('http://webim.feixin.10086.cn/content/WebIM/SendSMS.aspx?Version=' + this.version, {
+                'Receivers': toUID,
+                'UserName':toUID,
+                'Message': msg,
+                'ssid':this.ssid
+            }, function (data) {
+                console.log(data);
+                if (data.rc === 200) {
+                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送成功！');
+                }else{
+                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送失败！请重新发送。');
+                }
+            });
+            this.version = this.version + 1;
         },
         get: function (url, data, callback, timeout) {
             dojo.xhrGet({
@@ -356,9 +363,9 @@ dojo.addOnLoad(function () {
     };
     dojo.connect(dojo.byId('login'), 'click', WebFetion, 'login');
     WebFetion.loadImage('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession&'+ Math.random());
-    
-    dojo.byId('login_form').elements['UserName'].value = '';
-    dojo.byId('login_form').elements['Pwd'].value = '';
+    dojo.connect(dojo.byId('login_code'), 'click', function(){
+        WebFetion.loadImage('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession&'+ Math.random());
+    });
     
     if (window.localStorage) {
         var elements = dojo.byId('login_form').elements;
