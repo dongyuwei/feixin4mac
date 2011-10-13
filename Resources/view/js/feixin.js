@@ -23,6 +23,11 @@ dojo.addOnLoad(function () {
     }
 
     var WebFetion = {
+        ccpsession:'',
+        ssid : '',
+        sid: '',
+        name:'',
+        version : 0,
         loadImage:function(url){
             var path = Titanium.Filesystem.getUserDirectory().toString() + Titanium.Filesystem.getSeparator() + 'code.jpeg';
             var request = Titanium.Network.createHTTPClient();
@@ -48,9 +53,7 @@ dojo.addOnLoad(function () {
         },
         login: function (e) {
             dojo.stopEvent(e);
-            console.log(dojo.formToQuery('login_form'));
-            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{OnlineStatus:400}), dojo.hitch(this, function (json) {
-                console.log('json:',json,typeof json);
+            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{OnlineStatus:400}), dojo.hitch(this, function (json,io) {
                 window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
                 window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
                 if (json.rc === 200) {
@@ -60,26 +63,20 @@ dojo.addOnLoad(function () {
                             dojo.style("login_succ", "display", "");
                         }
                     }).play();
-                    //this.get_personal_info();
+                    this.ssid = io.xhr.getResponseHeader('set-cookie').split('webim_sessionid=')[1].split(';')[0]
+                    console.log(io.xhr.getResponseHeader('set-cookie'));
+                    this.get_personal_info();
                 }
             }),{
                 'Cookie':this.ccpsession
             });
         },
-        ccpsession:'',
-        sid: '',
-        name:'',
+        
         //当前登陆用户的飞信号
         get_personal_info: function () {
             var me = this;
-            this.get('/get_personal_info', {}, function (json) {
-                var data;
-                try {
-                    data = dojo.fromJson(json);
-                } catch (e) {
-                    data = dojo.fromJson('' + json + '');
-                }
-                console.log(data);
+            me.post('https://webim.feixin.10086.cn/WebIM/GetPersonalInfo.aspx?Version=' + me.version, {ssid:me.ssid}, function (data) {
+                console.log(data)
                 if (data.rc === 200) {
                     var rv = data.rv;
                     dojo.style("login_succ", "display", "none");
@@ -93,16 +90,11 @@ dojo.addOnLoad(function () {
                     me.get_contact_list();
                 }
             });
+            me.version = me.version + 1;
         },
         get_contact_list: function () {
             var me = this;
-            this.get('/get_contact_list', {}, function (json) {
-                var data;
-                try {
-                    data = dojo.fromJson(json);
-                } catch (e) {
-                    data = dojo.fromJson('' + json + '');
-                }
+            me.post('https://webim.feixin.10086.cn//WebIM/GetContactList.aspx?Version=' + me.version, {ssid:me.ssid}, function (data) {
                 console.log(data);
                 if (data.rc === 200) {
                     dojo.style("loading", "display", "none");
@@ -117,9 +109,10 @@ dojo.addOnLoad(function () {
                     });
                     dojo.byId('contact_list').style.cssText = "width:300px;overflow:hidden;border:solid 1px #1693A5; "
 
-                    me.keep_alive();
+                    //me.keep_alive();
                 }
             });
+            me.version = me.version + 1;
         },
         status: { //pd
             '0': '隐身',
@@ -241,7 +234,10 @@ dojo.addOnLoad(function () {
                 error: function () {
                     console.error(arguments);
                 },
-                headers: dojo.mixin({ "Content-Type":"application/x-www-form-urlencoded; charset=utf-8" },headers)
+                headers: dojo.mixin({ 
+                    "Content-Type":"application/x-www-form-urlencoded; charset=utf-8",
+                    'Referer' : 'https://webim.feixin.10086.cn/'
+                },headers)
             });
 
         },
