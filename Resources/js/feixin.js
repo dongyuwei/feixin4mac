@@ -58,18 +58,27 @@ dojo.addOnLoad(function () {
             this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{OnlineStatus:400}), dojo.hitch(this, function (json,io) {
                 window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
                 window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
-                if (json.rc === 200) {
-                    dojo.fadeOut({
-                        node: "login_form",
-                        onEnd: function () {
-                            dojo.style("login_succ", "display", "");
-                        }
-                    }).play();
-                    this.ssid = io.xhr.getResponseHeader('set-cookie').split('webim_sessionid=')[1].split(';')[0]
-                    console.log(io.xhr.getResponseHeader('set-cookie'));
-                    this.get_personal_info();
-                }else{
-                    this.loadImage();//登陆失败就重新加载验证码图片
+                switch(json.rc){
+                    case 200:
+                        dojo.fadeOut({
+                            node: "login_form",
+                            onEnd: function () {
+                                dojo.style("login_form", "display", "none");
+                            }
+                        }).play();
+                        this.ssid = io.xhr.getResponseHeader('set-cookie').split('webim_sessionid=')[1].split(';')[0]
+                        console.log(io.xhr.getResponseHeader('set-cookie'));
+                        this.get_personal_info();
+                        break;
+                    case 311://手机号码/飞信号码错误
+                    
+                        break;
+                    case 321://密码错误
+                    
+                        break;
+                    case 312://验证码错误
+                        this.loadImage();//登陆失败就重新加载验证码图片
+                        break;
                 }
             }),{
                 'Cookie':this.ccpsession
@@ -83,8 +92,7 @@ dojo.addOnLoad(function () {
                 console.log(data)
                 if (data.rc === 200) {
                     var rv = data.rv;
-                    dojo.style("login_succ", "display", "none");
-                    dojo.style("user_info", "display", "");
+                    dojo.style("user_info", "display", "block");
                     me.name = dojo.byId('name').innerHTML = rv.nn;
                     dojo.byId('nick_name').innerHTML = rv.i;
                     dojo.byId('sid').innerHTML = rv.sid;
@@ -157,7 +165,7 @@ dojo.addOnLoad(function () {
                                         uid: item.Data.uid,
                                         crc: item.Data.crc
                                     });
-                                    img.style.cssText = "width:20px;height:20px;";
+                                    img.className = 'buddy-icon';
                                     dom.parentNode.insertBefore(img, dom.parentNode.children[0]);
                                 }
                             });
@@ -258,8 +266,8 @@ dojo.addOnLoad(function () {
         },
         show_group: function (group) {
             var dom = document.createElement('li');
-            var tmpl = '<div><a style="color:#FBB829;cursor:pointer;" herf="javascript:void(0);" id="group_#{id}">#{name}</a></div>\
-            <ul id="group_#{id}_contactlist">\
+            var tmpl = '<div><a class="group-name"  herf="javascript:void(0);" id="group_#{id}">#{name}</a></div>\
+            <ul id="group_#{id}_contactlist" class="group">\
             </ul>';
 
             dom.innerHTML = this.template(tmpl, {
@@ -274,7 +282,8 @@ dojo.addOnLoad(function () {
         },
         show_contact: function (contact) {
             var dom = document.createElement('li');
-            var tmpl = '<a style="color:#1693A5;" herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{name}</a>\
+            dom.className = "buddy";
+            var tmpl = '<a  herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{name}</a>\
 		    <span name="#{uid}" style="color:#F46B8D;"></span>';
 
             dom.innerHTML = this.template(tmpl, {
@@ -282,16 +291,18 @@ dojo.addOnLoad(function () {
                 uid: contact.uid,
                 uri: contact.uri
             });
+            
             dojo.connect(dom, 'click', this, function () {
                 this.show_chat_dialog(contact.uid, dom.getAttribute('nick') || contact.ln || contact.uid);
             });
+            
             var list = dojo.byId('group_' + contact.bl + '_contactlist');
             if (list) {
                 list.appendChild(dom);
             }
         },
         show_chat_dialog: function (to, name) {
-            dojo.byId('chatwindow').style.display = "";
+            dojo.byId('chatWindow').style.display = "block";
             dojo.byId('peer').innerHTML = "和 #" + name + "# 聊天：";
             this.load_history(to);
 

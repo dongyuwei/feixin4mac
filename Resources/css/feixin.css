@@ -1,3 +1,65 @@
+body {
+    background:#EEEFEF
+}
+#exit_fetion{
+    margin:5px;
+}
 #login_code{
     cursor:pointer;
+    vertical-align: middle;
+}
+#user_info{
+    display:none;
+    margin:5px 0px 5px 0px;
+    border: 1px solid #1693A5;
+    width:310px;
+}
+ul{
+    margin:0;padding:0;
+    list-style-type:none;
+}
+#contact_list{
+    padding:5px;
+}
+.group{
+    margin-left:20px;
+}
+.group-name{
+    color:black;cursor:pointer;
+}
+.buddy{
+    margin: 3px 0px;
+    height: 28px;
+    cursor: pointer;
+    text-align:left;
+    vertical-align:middle;
+}
+.buddy li:hover{
+    border: 1px solid #D9D9D9;
+    background-color: #CBE7FC;
+}
+.buddy a{
+    color:#1693A5;
+}
+.buddy-icon{
+    width:28px;height:28px;text-align:center;
+}
+
+#chatWindow{
+    display:none;
+    width:300px;
+    height:400px;
+    border: 1px solid #1693A5;
+    position:absolute;
+    top:100px;
+    left:500px;
+}
+#chat_content{
+    width:294px;height:76px;
+    border-top:2px solid #1693A5;
+}
+.chat-history{
+    width:100%;
+    height:300px;
+    overflow-y:auto;
 }
