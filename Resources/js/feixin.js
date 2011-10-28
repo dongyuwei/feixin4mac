@@ -16,7 +16,7 @@ dojo.addOnLoad(function () {
         popup.setMessage(body);
         popup.setTimeout(timeout || 7000);
         popup.setCallback(callback || function(){
-            console.log('Titanium.Notification.Notification');
+            console.log('Titanium.Notification.Notification:',body);
         });
         popup.show();
         return true;
@@ -30,7 +30,7 @@ dojo.addOnLoad(function () {
         uid: '',
         name:'',
         version : 0,
-        loadImage:function(url){
+        loadImage:function(){
             var path = Titanium.Filesystem.getUserDirectory().toString() + Titanium.Filesystem.getSeparator() + 'code.jpeg';
             var request = Titanium.Network.createHTTPClient();
             request.setTimeout(10000);
@@ -38,17 +38,17 @@ dojo.addOnLoad(function () {
             request.onerror = function(e) {
                 console.log('error when loadImage:',e);
             };
-            if (request.open('GET', url)) {
+            if (request.open('GET', 'https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession&'+ Math.random())) {
                 request.receive(function(data) {
                     var file = Titanium.Filesystem.getFile(path);
                     var stream = Titanium.Filesystem.getFileStream(file);
                     stream.open(Titanium.Filesystem.MODE_WRITE);
                     stream.write(data);
                     stream.close();
-                    dojo.byId('login_code').src = 'file:///' + path;
+                    dojo.byId('login_code').src = 'file:///' + path + "?" + Math.random();//去掉缓存
                     dojo.byId('login').disabled = false;
                     me.ccpsession = request.getResponseHeader('set-cookie').split(';')[0];
-                    console.log('ccpsession:',me.ccpsession);//如果没有catch住"访问未定义的js变量"这种错误就能使Titanium崩溃
+                    console.log('ccpsession:',me.ccpsession);
                     request = null;
                 });
             }
@@ -68,6 +68,8 @@ dojo.addOnLoad(function () {
                     this.ssid = io.xhr.getResponseHeader('set-cookie').split('webim_sessionid=')[1].split(';')[0]
                     console.log(io.xhr.getResponseHeader('set-cookie'));
                     this.get_personal_info();
+                }else{
+                    this.loadImage();//登陆失败就重新加载验证码图片
                 }
             }),{
                 'Cookie':this.ccpsession
@@ -362,9 +364,9 @@ dojo.addOnLoad(function () {
         }
     };
     dojo.connect(dojo.byId('login'), 'click', WebFetion, 'login');
-    WebFetion.loadImage('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession&'+ Math.random());
+    WebFetion.loadImage();
     dojo.connect(dojo.byId('login_code'), 'click', function(){
-        WebFetion.loadImage('https://webim.feixin.10086.cn/WebIM/GetPicCode.aspx?Type=ccpsession&'+ Math.random());
+        WebFetion.loadImage();
     });
     
     if (window.localStorage) {

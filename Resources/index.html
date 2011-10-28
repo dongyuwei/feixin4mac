@@ -1,16 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"> 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
         <title>飞信(@月明沧海)</title>
-        <script src="view/js/dojo.js" charset="utf-8" type="application/javascript"  ></script>
-        <script src="view/js/feixin.js" charset="utf-8" type="application/javascript" ></script>
+         <link href="css/feixin.css" type="text/css" rel="stylesheet" charset="utf-8" />
+        <script src="js/dojo.js" charset="utf-8" type="application/javascript"  ></script>
+        <script src="js/feixin.js" charset="utf-8" type="application/javascript" ></script>
     </head>
     <body>
       <form  id="login_form">
-        <LABEL for='UserName' >手机或飞信号:</LABEL><input name='UserName' type='text' />
-        <LABEL for='Pwd' >密码:</LABEL><input name='Pwd' type='password'/>
-        <LABEL for='Ccp' >验证码:</LABEL><input name='Ccp' type='text' />
+        <LABEL for='UserName' >手机或飞信号:</LABEL><input name='UserName' type='number' required autofocus  />
+        <LABEL for='Pwd' >密码:</LABEL><input name='Pwd' type='password' required />
+        <LABEL for='Ccp' >验证码:</LABEL><input name='Ccp' type='text' required />
         <img id="login_code" />
         <input id="login" type='submit' disabled value='登录飞信'/>
      </form>
@@ -34,7 +35,7 @@
         <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span><em>(最多<strong>180</strong>字)</em><button id="send_msg">发 送</button>
      </div>
     <script>
-        
+       
     </script>
   </body>
 </html>
