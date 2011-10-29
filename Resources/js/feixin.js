@@ -64,6 +64,7 @@ dojo.addOnLoad(function () {
                             node: "login_form",
                             onEnd: function () {
                                 dojo.style("login_form", "display", "none");
+                                dojo.style("login", "display", "none");
                             }
                         }).play();
                         this.ssid = io.xhr.getResponseHeader('set-cookie').split('webim_sessionid=')[1].split(';')[0]

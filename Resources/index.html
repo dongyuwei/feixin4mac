@@ -15,7 +15,6 @@
         <LABEL for='Ccp' >验证码:</LABEL><input name='Ccp' type='text' required />
         <img id="login_code" />
      </form>
-     <button id="exit_fetion"  onclick="Titanium.App.exit()"> 退出飞信</button>
      <button id="login"  disabled >登录飞信</button>
       
      <div id="user_info">
@@ -37,5 +36,36 @@
         <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span>
         <em>(最多<strong>180</strong>字)</em><button id="send_msg">发 送</button>
      </div>
+     <script>
+        //todo:
+        //1 登陆form美化
+        //2 聊天对话框弹出式窗口
+        //3 dock动画通知---图片切换
+        //4 消息通知优化---列表头像闪动
+        //5 奇偶行颜色区别
+        //6 默认高度和最小高度变大些
+        //7 默认宽度
+        
+        /*
+        Titanium.UI.setDockIcon('dyw.jpg'); //可以用于dock上提示消息数量---类似邮件客户端
+        setTimeout("Titanium.UI.setDockIcon('default_app_logo.png')",2000);
+        
+        var currentWindow = Titanium.UI.getCurrentWindow();
+        var newWindow = currentWindow.createWindow('http://baidu.com');
+        newWindow.setWidth(400);
+        newWindow.setHeight(300);
+        newWindow.open();
+       
+       
+        var menu = Titanium.UI.createMenu();
+        var file = menu.addSubMenu("File");
+        var help = menu.addSubMenu("Help");
+        file.addItem("Open", function () { alert('Do open');});
+        file.addSeparator();
+        file.addItem("Exit", function () { Titanium.App.exit(); });
+        help.addItem("About", function () { alert('Show about box here');  });
+        Titanium.UI.setMenu(menu);  
+        */
+     </script>
   </body>
 </html>

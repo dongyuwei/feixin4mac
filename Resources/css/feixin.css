@@ -1,9 +1,6 @@
 body {
     background:#EEEFEF
 }
-#exit_fetion{
-    margin:5px;
-}
 #login_code{
     cursor:pointer;
     vertical-align: middle;
@@ -25,24 +22,30 @@ ul{
     margin-left:20px;
 }
 .group-name{
-    color:black;cursor:pointer;
+    color:black;
+    cursor:pointer;
+    font-weight:bold;
 }
 .buddy{
     margin: 3px 0px;
     height: 28px;
     cursor: pointer;
-    text-align:left;
-    vertical-align:middle;
+    line-height:28px;
 }
-.buddy li:hover{
-    border: 1px solid #D9D9D9;
+li.buddy:nth-child(odd){
+    background-color: #E3E3E3;
+}
+li.buddy:hover{
     background-color: #CBE7FC;
 }
 .buddy a{
     color:#1693A5;
 }
 .buddy-icon{
-    width:28px;height:28px;text-align:center;
+    float: left;
+    width:28px;
+    height:28px;
+    margin-right:3px;
 }
 
 #chatWindow{
