@@ -55,7 +55,8 @@ dojo.addOnLoad(function () {
         },
         login: function (e) {
             dojo.stopEvent(e);
-            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{OnlineStatus:400}), dojo.hitch(this, function (json,io) {
+            var status = dojo.byId('login_form').elements['OnlineStatus'].checked ? '0' : '400';
+            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{'OnlineStatus':status}), dojo.hitch(this, function (json,io) {
                 window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
                 window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
                 switch(json.rc){
@@ -200,6 +201,22 @@ dojo.addOnLoad(function () {
             });
             me.version = me.version + 1;
         },
+        set_presence: function (presence) {
+            this.post('https://webim.feixin.10086.cn/WebIM/SetPresence.aspx?Version=' + this.version, {
+                'Presence': presence,//400
+                'Custom': this.status[presence],
+                'ssid':this.ssid
+            }, function (data) {
+                console.log(data);
+                if (data.rc === 200) {
+                    notifier.notify(window.location.href + "images/feixin.png", "提示:", '设置状态成功！');
+                    //todo
+                }else{
+                    notifier.notify(window.location.href + "images/feixin.png", "提示:", '设置状态失败,请重试。');
+                }
+            });
+            this.version = this.version + 1;
+        },
         send_msg: function (to, msg, isSendSms) {
             this.post('https://webim.feixin.10086.cn/WebIM/SendMsg.aspx?Version=' + this.version, {
                 'To': to,
@@ -216,11 +233,27 @@ dojo.addOnLoad(function () {
             });
             this.version = this.version + 1;
         },
-        send_sms: function (to, msg, isSendSms) {
+        send_sms: function (toUID, sms) {
             this.post('http://webim.feixin.10086.cn/content/WebIM/SendSMS.aspx?Version=' + this.version, {
                 'Receivers': toUID,
                 'UserName':toUID,
-                'Message': msg,
+                'Message': sms,
+                'ssid':this.ssid
+            }, function (data) {
+                console.log(data);
+                if (data.rc === 200) {
+                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送成功！');
+                }else{
+                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送失败！请重新发送。');
+                }
+            });
+            this.version = this.version + 1;
+        },
+        send_sms_to_self: function (sms) {
+            this.post('http://webim.feixin.10086.cn/content/WebIM/SendSMS.aspx?Version=' + this.version, {
+                'Receivers': this.uid,
+                'UserName':this.uid,
+                'Message': sms,
                 'ssid':this.ssid
             }, function (data) {
                 console.log(data);
@@ -267,7 +300,7 @@ dojo.addOnLoad(function () {
         },
         show_group: function (group) {
             var dom = document.createElement('li');
-            var tmpl = '<div><a class="group-name"  herf="javascript:void(0);" id="group_#{id}">#{name}</a></div>\
+            var tmpl = '<div><a class="group-name"  herf="javascript:void(0);" id="group_#{id}">▼#{name}</a></div>\
             <ul id="group_#{id}_contactlist" class="group">\
             </ul>';
 
@@ -277,8 +310,15 @@ dojo.addOnLoad(function () {
             });
             dojo.byId('contact_list').appendChild(dom);
             var el = dojo.byId("group_" + group.id + "_contactlist");
+            var link = dom.children[0].children[0];
             dojo.connect(dojo.byId("group_" + group.id), 'click', function () {
-                el.style.display = el.style.display === "none" ? "" : "none";
+                if(el.style.display === "none"){
+                    el.style.display = "" ;
+                    link.innerHTML = "▼" + group.n;
+                }else{
+                    el.style.display = "none" ;
+                    link.innerHTML = "►" + group.n;
+                }
             });
         },
         show_contact: function (contact) {
@@ -332,11 +372,9 @@ dojo.addOnLoad(function () {
             }
 
             function enterSubmit(e) {
-                if (e.keyCode === 13 || e.which === 13 || e.charCode === 13) {
-                    if (!e.ctrlKey) { //enter提交
-                        sendMessage();
-                        dojo.stopEvent(e); //不换行就提交
-                    }
+                if (e.ctrlKey && e.keyCode === 13) {// || e.which === 13 || e.charCode === 13
+                    sendMessage();
+                    dojo.stopEvent(e); //不换行就提交
                 }
             }
 
@@ -375,12 +413,28 @@ dojo.addOnLoad(function () {
 
         }
     };
+    
     dojo.connect(dojo.byId('login'), 'click', WebFetion, 'login');
+    dojo.connect(dojo.byId('login_form'), 'submit', function(e){
+        dojo.stopEvent(e);
+        WebFetion.login(e);
+    });
     WebFetion.loadImage();
     dojo.connect(dojo.byId('login_code'), 'click', function(){
         WebFetion.loadImage();
     });
     
+    dojo.byId('set_status').onchange = function(){
+        console.info(this.value);
+        if(this.value !== ""){
+            WebFetion.set_presence(this.value);
+        }
+    };
+    
+    dojo.connect(dojo.byId('send_sms_to_self'), 'click', function(){
+        var sms = window.prompt('请输入短信:');
+        sms && WebFetion.send_sms_to_self(sms);
+    });
     if (window.localStorage) {
         var elements = dojo.byId('login_form').elements;
         if(window.localStorage.getItem('name')){
@@ -389,6 +443,5 @@ dojo.addOnLoad(function () {
         if(window.localStorage.getItem('pwd')){
             elements['Pwd'].value = window.localStorage.getItem('pwd') ;
         }
-        
     }
 });

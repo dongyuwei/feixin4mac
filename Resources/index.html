@@ -8,21 +8,35 @@
         <script src="js/feixin.js" charset="utf-8" type="application/javascript" ></script>
     </head>
     <body>
-      
       <form  id="login_form">
-        <LABEL for='UserName' >手机或飞信号:</LABEL><input name='UserName' type='number' required autofocus  />
-        <LABEL for='Pwd' >密码:</LABEL><input name='Pwd' type='password' required />
-        <LABEL for='Ccp' >验证码:</LABEL><input name='Ccp' type='text' required />
+        <LABEL for='UserName' >手机或飞信号:</LABEL>
+        <input name='UserName' type='number'  required autofocus placeholder='手机或飞信号'>
+        <LABEL for='Pwd' >密码:</LABEL>
+        <input name='Pwd' type='password' required >
+        <LABEL for='Ccp' >验证码(不区分大小写):</LABEL>
+        <input name='Ccp' type='text' required>
         <img id="login_code" />
+        
+        <LABEL for='OnlineStatus' >隐身登陆:</LABEL>
+        <input type="checkbox" value="0" name="OnlineStatus">
      </form>
+     
      <button id="login"  disabled >登录飞信</button>
       
      <div id="user_info">
-        登陆成功:
-        <div>姓名：<span id="name"></span></div>
+        <span id="name"></span><button id="send_sms_to_self">给自己发短信</button>
+        <select id='set_status'>
+            <option value="">设置状态</option>
+            <option value="400" >在线</option>
+            <option value="0">隐身</option>
+            <option value="100">离开</option>
+            <option value="600">忙碌</option>
+        </select>
         <div>个性签名：<span id="nick_name"></span></div>
         <div>飞信号码：<span id="sid"></span></div>
+        
      </div>
+    
      <div id="loading" style="display:none;" >加载联系人列表...</div>
     
      <ul id="contact_list" >
@@ -32,22 +46,29 @@
         <div class="chat-history">
             <ul id="chat_history"></ul>
         </div>
-        <textarea value="" id="chat_content" contenteditable="true" ></textarea>
+        <textarea value="" id="chat_content" contenteditable="true"  placeholder='ctrl+enter发送' ></textarea>
         <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span>
-        <em>(最多<strong>180</strong>字)</em><button id="send_msg">发 送</button>
+        <em>(最多<strong>180</strong>字)</em><button id="send_msg" title='ctrl+enter发送' >发 送</button>
      </div>
      <script>
         //todo:
         //1 登陆form美化
-        //2 聊天对话框弹出式窗口
+        //2 聊天对话框弹出式窗口,气泡式美化
         //3 dock动画通知---图片切换
         //4 消息通知优化---列表头像闪动
         //5 奇偶行颜色区别
         //6 默认高度和最小高度变大些
-        //7 默认宽度
-        
+        //7 调整默认宽度
+        //8 未联网时错误提示
+        //9 去掉边框,列表固定高度
+        //10 ctrl+enter提交
+        // 11 登陆状态,登陆后可以设置自己状态
+        // 12 搜索功能
+        //13 列表拼音排序
+        //14 表情
+        //15 给自己发短信
         /*
-        Titanium.UI.setDockIcon('dyw.jpg'); //可以用于dock上提示消息数量---类似邮件客户端
+        Titanium.UI.setDockIcon('fetion.png'); //可以用于dock上提示消息数量---类似邮件客户端
         setTimeout("Titanium.UI.setDockIcon('default_app_logo.png')",2000);
         
         var currentWindow = Titanium.UI.getCurrentWindow();
@@ -67,5 +88,6 @@
         Titanium.UI.setMenu(menu);  
         */
      </script>
+
   </body>
 </html>

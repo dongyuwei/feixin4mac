@@ -13,14 +13,14 @@
 <id>initial</id>
 <title>fetion4mac</title>
 <url>app://index.html</url>
-<width>350</width>
+<width>345</width>
 <max-width>1024</max-width>
 <min-width>320</min-width>
-<height>500</height>
+<height>840</height>
 <max-height>3000</max-height>
-<min-height>400</min-height>
+<min-height>500</min-height>
 <fullscreen>false</fullscreen>
-<resizable>true</resizable>
+<resizable>false</resizable>
 <chrome scrollbars="true">true</chrome>
 <maximizable>true</maximizable>
 <minimizable>true</minimizable>
