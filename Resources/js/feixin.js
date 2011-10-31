@@ -348,7 +348,10 @@ dojo.addOnLoad(function () {
             this.load_history(to);
 
             var content = dojo.byId('chat_content');
-            content.focus();
+            setTimeout(function(){
+                content.focus();
+            },2000);
+            
             var me = this;
 
             function sendMessage() {
