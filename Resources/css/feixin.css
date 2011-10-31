@@ -7,6 +7,11 @@ input{
     display:block;
     margin-left:30px;
 }
+#chat_checkbox{
+    display:inline;
+    width:10px;
+    margin-left:0px;
+}
 #login_code{
     cursor:pointer;
     display:block;
