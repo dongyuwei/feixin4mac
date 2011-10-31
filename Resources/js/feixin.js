@@ -398,6 +398,7 @@ dojo.addOnLoad(function () {
             dojo.forEach(his.split("###"), function (item) {
                 if (item) {
                     var dom = document.createElement("LI");
+                    dom.className = "chat-item";
                     dom.innerHTML = item;
                     history.appendChild(dom);
                 }
