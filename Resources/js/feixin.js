@@ -121,8 +121,7 @@ dojo.addOnLoad(function () {
                     dojo.forEach(rv.bds, function (buddy) {
                         me.show_contact(buddy);
                     });
-                    dojo.byId('contact_list').style.cssText = "width:300px;overflow:hidden;border:solid 1px #1693A5; "
-
+                    dojo.style("contact_list", "display", "block");
                     me.keep_alive();
                 }
             });
