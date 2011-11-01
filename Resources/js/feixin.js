@@ -187,6 +187,9 @@ dojo.addOnLoad(function () {
                             if(item.Data.ec === 900){
                                 me.logout = true;
                                 notifier.notify('','错误提示:','该用户在其它客户端登录');
+                                setTimeout(function(){
+                                    Titanium.App.restart();
+                                },2000);
                             }else{
                                 notifier.notify('','错误提示:',item.Data.emsg);
                             }
