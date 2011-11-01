@@ -14,8 +14,8 @@
 <title>fetion4mac</title>
 <url>app://index.html</url>
 <width>345</width>
-<max-width>1024</max-width>
-<min-width>320</min-width>
+<max-width>677</max-width>
+<min-width>345</min-width>
 <height>840</height>
 <max-height>3000</max-height>
 <min-height>500</min-height>
@@ -26,4 +26,5 @@
 <minimizable>true</minimizable>
 <closeable>true</closeable>
 </window>
+<analytics>false</analytics>
 </ti:app>
