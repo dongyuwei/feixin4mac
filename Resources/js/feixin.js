@@ -174,7 +174,7 @@ dojo.addOnLoad(function () {
                         }
                         if (item.DataType === 3 && item.Data) {
                             console.log("new msg:",item.Data.msg);
-                            var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " 对你说： " + item.Data.msg + " (" + (new Date()).toString() + ")";
+                            var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " ：" + item.Data.msg + " (" + (new Date()).toLocaleString() + ")";
                             try {
                                 notifier.notify(me.icons[item.Data.fromUid] || (window.location.href + "images/feixin.png"), "飞信新消息:", msg);
                             } catch (e) {
@@ -343,6 +343,7 @@ dojo.addOnLoad(function () {
             }
         },
         show_chat_dialog: function (to, name) {
+            Titanium.UI.getMainWindow().setWidth(650);
             dojo.byId('chatWindow').style.display = "block";
             dojo.byId('peer').innerHTML = "和 #" + name + "# 聊天：";
             this.load_history(to);
@@ -358,7 +359,7 @@ dojo.addOnLoad(function () {
                 var msg = me.trim(content.value);
                 if (msg) {
                     me.send_msg(to, msg, dojo.byId('chat_checkbox').checked);
-                    msg = me.name + " 对 " + name + " 说：" + msg + " (" +(new Date()).toString() + ")";
+                    msg = "我: " + msg + " (" +(new Date()).toLocaleString() + ")";
                     me.save_history(to, msg);
 
                     setTimeout(function () {
@@ -402,6 +403,9 @@ dojo.addOnLoad(function () {
                 if (item) {
                     var dom = document.createElement("LI");
                     dom.className = "chat-item";
+                    if(/^我:/.test(item)){
+                        dom.className = "chat-item chat-item-self";
+                    }
                     dom.innerHTML = item;
                     history.appendChild(dom);
                 }
