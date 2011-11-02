@@ -150,8 +150,11 @@ dojo.addOnLoad(function () {
                     dojo.forEach(rv, function (item) {
                         if (item.DataType === 2 && item.Data) {
                             dojo.forEach(document.getElementsByName(item.Data.uid), function (dom) {
-                                if (me.status[item.Data.pb] !== undefined) {
-                                    dom.innerHTML = " --- " + (item.Data.pd || me.status[item.Data.pb]);
+                                if (me.status[item.Data.pb]) {
+                                    if(item.Data.pb == '0'){
+                                        item.Data.pb = '365';
+                                    }
+                                    dom.innerHTML = "  " + (item.Data.pd || me.status[item.Data.pb]);
                                 }
                                 //i是签名，nn是名称，mn手机号
                                 dom.parentNode.title = [item.Data.i, item.Data.mn, item.Data.uri].join(" ");
@@ -173,7 +176,7 @@ dojo.addOnLoad(function () {
                         }
                         if (item.DataType === 3 && item.Data) {
                             console.log("new msg:",item.Data.msg);
-                            var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " ：" + item.Data.msg + " (" + (new Date()).toLocaleString() + ")";
+                            var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " ：" + item.Data.msg + " (" + (new Date()).toLocaleString().replace("格林尼治标准时间+0800","-") + ")";
                             try {
                                 notifier.notify(me.icons[item.Data.fromUid] || (window.location.href + "images/feixin.png"), "飞信新消息:", msg);
                             } catch (e) {
@@ -327,7 +330,7 @@ dojo.addOnLoad(function () {
             var dom = document.createElement('li');
             dom.className = "buddy";
             var tmpl = '<a  herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{name}</a>\
-		    <span name="#{uid}" style="color:#F46B8D;"></span>';
+		    <span name="#{uid}" class="status-text"></span>';
 
             dom.innerHTML = this.template(tmpl, {
                 name: contact.ln || contact.uid,
@@ -361,7 +364,7 @@ dojo.addOnLoad(function () {
                 var msg = me.trim(content.value);
                 if (msg) {
                     me.send_msg(to, msg, dojo.byId('chat_checkbox').checked);
-                    msg = "我: " + msg + " (" +(new Date()).toLocaleString() + ")";
+                    msg = "我: " + msg + " (" +(new Date()).toLocaleString().replace("格林尼治标准时间+0800","-") + ")";
                     me.save_history(to, msg);
 
                     setTimeout(function () {
