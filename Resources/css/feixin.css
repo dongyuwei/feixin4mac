@@ -73,11 +73,10 @@ li.chat-item-self{
 #chatWindow{
     display:none;
     width:300px;
-    height:400px;
+    height:418px;
     border: 1px solid #1693A5;
     position:absolute;
     top:72px;
-    left:337px;
 }
 #chat_content{
     width:294px;height:76px;
@@ -90,4 +89,13 @@ li.chat-item-self{
 }
 span.status-text{
     color:#F46B8D;
+}
+#peer{
+    margin:10px 0px 5px;
+    padding:3px;
+    border-bottom: 1px solid #1693A5;
+    color:red;
+}
+#hide_chat_window{
+    float:right;
 }

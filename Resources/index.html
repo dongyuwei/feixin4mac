@@ -8,40 +8,44 @@
         <script src="js/feixin.js" charset="utf-8" type="application/javascript" ></script>
     </head>
     <body>
-      <form  id="login_form">
-        <LABEL for='UserName' >手机或飞信号:</LABEL>
-        <input name='UserName' type='number'  required autofocus placeholder='手机或飞信号'>
-        <LABEL for='Pwd' >密码:</LABEL>
-        <input name='Pwd' type='password' required >
-        <LABEL for='Ccp' >验证码(不区分大小写):</LABEL>
-        <input name='Ccp' type='text' required>
-        <img id="login_code" />
+        <div id="left_panel">
+          <form  id="login_form">
+            <LABEL for='UserName' >手机或飞信号:</LABEL>
+            <input name='UserName' type='number'  required autofocus placeholder='手机或飞信号'>
+            <LABEL for='Pwd' >密码:</LABEL>
+            <input name='Pwd' type='password' required >
+            <LABEL for='Ccp' >验证码(不区分大小写):</LABEL>
+            <input name='Ccp' type='text' required>
+            <img id="login_code" />
+            
+            <LABEL for='OnlineStatus' >隐身登陆:</LABEL>
+            <input type="checkbox" value="0" name="OnlineStatus">
+         </form>
+         
+         <button id="login"  disabled >登录飞信</button>
+          
+         <div id="user_info">
+            <span id="name"></span><button id="send_sms_to_self">给自己发短信</button>
+            <select id='set_status'>
+                <option value="">设置状态</option>
+                <option value="400" >在线</option>
+                <option value="0">隐身</option>
+                <option value="100">离开</option>
+                <option value="600">忙碌</option>
+            </select>
+            <div>个性签名：<span id="nick_name"></span></div>
+            <div>飞信号码：<span id="sid"></span></div>
+            
+         </div>
         
-        <LABEL for='OnlineStatus' >隐身登陆:</LABEL>
-        <input type="checkbox" value="0" name="OnlineStatus">
-     </form>
-     
-     <button id="login"  disabled >登录飞信</button>
-      
-     <div id="user_info">
-        <span id="name"></span><button id="send_sms_to_self">给自己发短信</button>
-        <select id='set_status'>
-            <option value="">设置状态</option>
-            <option value="400" >在线</option>
-            <option value="0">隐身</option>
-            <option value="100">离开</option>
-            <option value="600">忙碌</option>
-        </select>
-        <div>个性签名：<span id="nick_name"></span></div>
-        <div>飞信号码：<span id="sid"></span></div>
+         <div id="loading" style="display:none;" >加载联系人列表...</div>
         
+         <ul id="contact_list" >
+         </ul>
      </div>
-    
-     <div id="loading" style="display:none;" >加载联系人列表...</div>
-    
-     <ul id="contact_list" >
-     </ul>
+     
      <div id="chatWindow">
+        <img id="hide_chat_window" src="../images/minus.png" title="隐藏对话框" />
         <div id="peer"></div>
         <div class="chat-history">
             <ul id="chat_history"></ul>
@@ -52,24 +56,16 @@
      </div>
      <script>
         //todo:
-        //1 登陆form美化
-        //2 聊天对话框弹出式窗口,气泡式美化
-        //3 dock动画通知---图片切换
-        //4 消息通知优化---列表头像闪动
-        //5 奇偶行颜色区别
-        //6 默认高度和最小高度变大些
-        //7 调整默认宽度
-        //8 未联网时错误提示
-        //9 去掉边框,列表固定高度
-        //10 ctrl+enter提交
-        //11 登陆状态,登陆后可以设置自己状态
-        //12 搜索功能
-        //13 列表拼音排序
-        //14 表情
-        //15 给自己发短信
+        //dock动画通知---图片切换
+        //消息通知优化---列表头像闪动
+        //未联网时错误提示
+        //搜索功能
+        //列表拼音排序
+        //表情
         /*
         Titanium.UI.setDockIcon('fetion.png'); //可以用于dock上提示消息数量---类似邮件客户端
         setTimeout("Titanium.UI.setDockIcon('default_app_logo.png')",2000);
+        Titanium.UI.setBadge("9");//在dock图标上覆盖红色数字9提醒新消息数量. dock图标必须是透明png效果才好.
         */
      </script>
 

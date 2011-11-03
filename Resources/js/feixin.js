@@ -1,3 +1,6 @@
+/*
+*@author newdongyuwei@gmail.com | http://weibo.com/dongyuwei | http://session.im
+*/
 dojo.addOnLoad(function () {
     var console = window.console || {
         log: function () {},
@@ -348,9 +351,9 @@ dojo.addOnLoad(function () {
             }
         },
         show_chat_dialog: function (to, name) {
-            Titanium.UI.getMainWindow().setWidth(650);
+            dojo.byId('left_panel').style.display = "none";
             dojo.byId('chatWindow').style.display = "block";
-            dojo.byId('peer').innerHTML = "和 #" + name + "# 聊天：";
+            dojo.byId('peer').innerHTML = "和 " + name + " 聊天中...";
             this.load_history(to);
 
             var content = dojo.byId('chat_content');
@@ -435,6 +438,10 @@ dojo.addOnLoad(function () {
     WebFetion.loadImage();
     dojo.connect(dojo.byId('login_code'), 'click', function(){
         WebFetion.loadImage();
+    });
+    dojo.connect(dojo.byId('hide_chat_window'), 'click', function(){
+        dojo.byId('chatWindow').style.display = 'none';
+        dojo.byId('left_panel').style.display = "block";
     });
     
     dojo.byId('set_status').onchange = function(){
