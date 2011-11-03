@@ -144,6 +144,8 @@ dojo.addOnLoad(function () {
         contacts: {},
         icons:{},
         logout:false,
+        newMsgCount:{},
+        totalMsgCount:0,
         keep_alive:function(){
             var me = this;
             me.post('https://webim.feixin.10086.cn/WebIM/GetConnect.aspx?Version=' + me.version, {ssid:me.ssid}, function (data) {
@@ -186,7 +188,12 @@ dojo.addOnLoad(function () {
                                 alert(msg);
                             }
                             me.save_history(item.Data.fromUid, msg);
-                            me.show_chat_dialog(item.Data.fromUid, me.contacts[item.Data.fromUid] || item.Data.fromUid);
+                            dojo.query('img[uid="UID"]'.replace('UID',item.Data.fromUid))[0].style.display = 'inline-block';
+                            if(me.current_peer_uid != item.Data.fromUid){
+                                me.newMsgCount[item.Data.fromUid] = me.newMsgCount[item.Data.fromUid] + 1;
+                                me.setBadge(++me.totalMsgCount);
+                            }
+                            //me.show_chat_dialog(item.Data.fromUid, me.contacts[item.Data.fromUid] || item.Data.fromUid);
                         }
                         if (item.DataType === 4 && item.Data) {
                             if(item.Data.ec === 900){
@@ -329,25 +336,41 @@ dojo.addOnLoad(function () {
                 }
             });
         },
+        current_peer_uid:0,
         show_contact: function (contact) {
             var dom = document.createElement('li');
             dom.className = "buddy";
             var tmpl = '<a  herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{name}</a>\
-		    <span name="#{uid}" class="status-text"></span>';
-
+		    <span name="#{uid}" class="status-text"></span><img uid="#{uid}" class="new-msg-icon" src="../images/sun.gif"/>';
+		    var uid = contact.uid, nick = contact.nn || contact.ln || contact.uid;
+            dom.setAttribute('uid',uid);
+            dom.setAttribute('nick',nick);
+            this.newMsgCount[uid] = 0;
             dom.innerHTML = this.template(tmpl, {
                 name: contact.ln || contact.uid,
-                uid: contact.uid,
+                uid: uid,
                 uri: contact.uri
             });
             
             dojo.connect(dom, 'click', this, function () {
-                this.show_chat_dialog(contact.uid, dom.getAttribute('nick') || contact.ln || contact.uid);
+                this.current_peer_uid = uid;
+                dojo.query("img.new-msg-icon",dom)[0].style.display = "none";
+                this.totalMsgCount -= this.newMsgCount[uid];
+                this.setBadge(this.totalMsgCount);
+                this.newMsgCount[uid] = 0;
+                this.show_chat_dialog(contact.uid, nick);
             });
             
             var list = dojo.byId('group_' + contact.bl + '_contactlist');
             if (list) {
                 list.appendChild(dom);
+            }
+        },
+        setBadge:function(number){
+            if(number > 0){
+                Titanium.UI.setBadge(number.toString());
+            }else{
+                Titanium.UI.setBadge(0);
             }
         },
         show_chat_dialog: function (to, name) {

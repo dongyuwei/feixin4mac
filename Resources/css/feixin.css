@@ -99,3 +99,8 @@ span.status-text{
 #hide_chat_window{
     float:right;
 }
+img.new-msg-icon{
+    display:none;
+    width:28px;height:28px;
+    float:right;
+}
