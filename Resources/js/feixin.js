@@ -146,6 +146,7 @@ dojo.addOnLoad(function () {
         logout:false,
         newMsgCount:{},
         totalMsgCount:0,
+        buddyStatus:{},
         keep_alive:function(){
             var me = this;
             me.post('https://webim.feixin.10086.cn/WebIM/GetConnect.aspx?Version=' + me.version, {ssid:me.ssid}, function (data) {
@@ -157,10 +158,10 @@ dojo.addOnLoad(function () {
                             if(item.Data.pb == '0'){
                                 item.Data.pb = '365';
                             }
-                            dojo.byId('peer-status').innerHTML = "(" + (item.Data.pd || me.status[item.Data.pb])+ ")";
+                            me.buddyStatus[item.Data.uid] = item.Data.pd || me.status[item.Data.pb]||"";
                             dojo.forEach(document.getElementsByName(item.Data.uid), function (dom) {
                                 if (me.status[item.Data.pb]) {
-                                    dom.innerHTML = "  " + (item.Data.pd || me.status[item.Data.pb]);
+                                    dom.innerHTML = "  " + (item.Data.pd || me.status[item.Data.pb]||"");
                                 }
                                 //i是签名，nn是名称，mn手机号
                                 dom.parentNode.title = [item.Data.i, item.Data.mn, item.Data.uri].join(" ");
@@ -361,6 +362,7 @@ dojo.addOnLoad(function () {
                 this.setBadge(this.totalMsgCount);
                 this.newMsgCount[uid] = 0;
                 this.show_chat_dialog(contact.uid, nick);
+                dojo.byId('peer-status').innerHTML = this.buddyStatus[uid] ;
             });
             
             var list = dojo.byId('group_' + contact.bl + '_contactlist');
