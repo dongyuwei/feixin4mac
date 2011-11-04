@@ -154,11 +154,12 @@ dojo.addOnLoad(function () {
                     var rv = data.rv;
                     dojo.forEach(rv, function (item) {
                         if (item.DataType === 2 && item.Data) {
+                            if(item.Data.pb == '0'){
+                                item.Data.pb = '365';
+                            }
+                            dojo.byId('peer-status').innerHTML = "(" + (item.Data.pd || me.status[item.Data.pb])+ ")";
                             dojo.forEach(document.getElementsByName(item.Data.uid), function (dom) {
                                 if (me.status[item.Data.pb]) {
-                                    if(item.Data.pb == '0'){
-                                        item.Data.pb = '365';
-                                    }
                                     dom.innerHTML = "  " + (item.Data.pd || me.status[item.Data.pb]);
                                 }
                                 //i是签名，nn是名称，mn手机号
@@ -192,8 +193,9 @@ dojo.addOnLoad(function () {
                             if(me.current_peer_uid != item.Data.fromUid){
                                 me.newMsgCount[item.Data.fromUid] = me.newMsgCount[item.Data.fromUid] + 1;
                                 me.setBadge(++me.totalMsgCount);
+                            }else{
+                                me.show_chat_dialog(item.Data.fromUid, me.contacts[item.Data.fromUid] || item.Data.fromUid);
                             }
-                            //me.show_chat_dialog(item.Data.fromUid, me.contacts[item.Data.fromUid] || item.Data.fromUid);
                         }
                         if (item.DataType === 4 && item.Data) {
                             if(item.Data.ec === 900){
@@ -376,7 +378,7 @@ dojo.addOnLoad(function () {
         show_chat_dialog: function (to, name) {
             dojo.byId('left_panel').style.display = "none";
             dojo.byId('chatWindow').style.display = "block";
-            dojo.byId('peer').innerHTML = "和 " + name + " 聊天中...";
+            dojo.byId('peer').innerHTML = "和 " + name  + " 聊天中...";
             this.load_history(to);
 
             var content = dojo.byId('chat_content');

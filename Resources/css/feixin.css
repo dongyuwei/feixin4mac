@@ -104,3 +104,6 @@ img.new-msg-icon{
     width:28px;height:28px;
     float:right;
 }
+#peer-status{
+    position: absolute; right: 33px; top: 7px;
+}
