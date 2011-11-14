@@ -59,6 +59,7 @@ dojo.addOnLoad(function () {
         login: function (e) {
             dojo.stopEvent(e);
             var status = dojo.byId('login_form').elements['OnlineStatus'].checked ? '0' : '400';
+            dojo.byId('set_status').value = status;
             this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{'OnlineStatus':status}), dojo.hitch(this, function (json,io) {
                 window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
                 window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
@@ -165,11 +166,7 @@ dojo.addOnLoad(function () {
                                 }
                                 //i是签名，nn是名称，mn手机号
                                 dom.parentNode.title = [item.Data.i, item.Data.mn, item.Data.uri].join(" ");
-                                if (item.Data.nn) {
-                                    me.contacts[item.Data.uid] = item.Data.nn;
-                                    dom.parentNode.children[0].innerHTML = item.Data.nn;
-                                    dom.parentNode.setAttribute("nick", item.Data.nn);
-                                }
+                                me.contacts[item.Data.uid] = item.Data.nn  || item.Data.ln || item.Data.uid;
                                 if (item.Data.crc) {
                                     var img = document.createElement("img");
                                     me.icons[item.Data.uid] = img.src = me.template("http://webim.feixin.10086.cn/WebIM/GetPortrait.aspx?did=#{uid}&Size=3&Crc=#{crc}&mid=#{uid}", {
@@ -185,7 +182,7 @@ dojo.addOnLoad(function () {
                             console.log("new msg:",item.Data.msg);
                             var msg = (me.contacts[item.Data.fromUid] || item.Data.fromUid) + " ：" + item.Data.msg + " (" + (new Date()).toLocaleString().replace("格林尼治标准时间+0800","-") + ")";
                             try {
-                                notifier.notify(me.icons[item.Data.fromUid] || (window.location.href + "images/feixin.png"), "飞信新消息:", msg);
+                                notifier.notify('', "飞信新消息:", msg);
                             } catch (e) {
                                 alert(msg);
                             }
@@ -227,10 +224,10 @@ dojo.addOnLoad(function () {
             }, function (data) {
                 console.log(data);
                 if (data.rc === 200) {
-                    notifier.notify(window.location.href + "images/feixin.png", "提示:", '设置状态成功！');
+                    notifier.notify('', "提示:", '设置状态成功！');
                     //todo
                 }else{
-                    notifier.notify(window.location.href + "images/feixin.png", "提示:", '设置状态失败,请重试。');
+                    notifier.notify('', "提示:", '设置状态失败,请重试。');
                 }
             });
             this.version = this.version + 1;
@@ -244,9 +241,9 @@ dojo.addOnLoad(function () {
             }, function (data) {
                 console.log(data);
                 if (data.rc === 200) {
-                    notifier.notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送成功！');
+                    notifier.notify('', "消息发送结果:", '发送成功！');
                 }else{
-                    notifier.notify(window.location.href + "images/feixin.png", "消息发送结果:", '发送失败！请重新发送。');
+                    notifier.notify('', "消息发送结果:", '发送失败！请重新发送。');
                 }
             });
             this.version = this.version + 1;
@@ -260,9 +257,9 @@ dojo.addOnLoad(function () {
             }, function (data) {
                 console.log(data);
                 if (data.rc === 200) {
-                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送成功！');
+                    notifier.notify('', "短信发送结果:", '发送成功！');
                 }else{
-                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送失败！请重新发送。');
+                    notifier.notify('', "短信发送结果:", '发送失败！请重新发送。');
                 }
             });
             this.version = this.version + 1;
@@ -276,9 +273,9 @@ dojo.addOnLoad(function () {
             }, function (data) {
                 console.log(data);
                 if (data.rc === 200) {
-                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送成功！');
+                    notifier.notify('', "短信发送结果:", '发送成功！');
                 }else{
-                    notifier.notify(window.location.href + "images/feixin.png", "短信发送结果:", '发送失败！请重新发送。');
+                    notifier.notify('', "短信发送结果:", '发送失败！请重新发送。');
                 }
             });
             this.version = this.version + 1;
@@ -343,14 +340,13 @@ dojo.addOnLoad(function () {
         show_contact: function (contact) {
             var dom = document.createElement('li');
             dom.className = "buddy";
-            var tmpl = '<a  herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{name}</a>\
+            var tmpl = '<a  herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{nick}</a>\
 		    <span name="#{uid}" class="status-text"></span><img uid="#{uid}" class="new-msg-icon" src="../images/sun.gif"/>';
 		    var uid = contact.uid, nick = contact.nn || contact.ln || contact.uid;
             dom.setAttribute('uid',uid);
-            dom.setAttribute('nick',nick);
             this.newMsgCount[uid] = 0;
             dom.innerHTML = this.template(tmpl, {
-                name: contact.ln || contact.uid,
+                nick: nick,
                 uid: uid,
                 uri: contact.uri
             });
@@ -452,8 +448,10 @@ dojo.addOnLoad(function () {
             var key = "web_fetion_" + peer_uid;
             window.localStorage.setItem(key, [window.localStorage.getItem(key), msg].join("###"));
         },
-        email_history: function () {
-
+        copy_history:function(){
+            var key = "web_fetion_" + this.current_peer_uid;
+            Titanium.UI.Clipboard.setText((content = window.localStorage.getItem(key) || "").replace(/###/g,"\n"));
+            notifier.notify('', "导出聊天记录:", '聊天记录已经复制到剪贴板!');
         }
     };
     
@@ -472,7 +470,6 @@ dojo.addOnLoad(function () {
     });
     
     dojo.byId('set_status').onchange = function(){
-        console.info(this.value);
         if(this.value !== ""){
             WebFetion.set_presence(this.value);
         }
@@ -482,6 +479,9 @@ dojo.addOnLoad(function () {
         var sms = window.prompt('请输入短信:');
         sms && WebFetion.send_sms_to_self(sms);
     });
+    
+    dojo.connect(dojo.byId('copy_history'), 'click', WebFetion, 'copy_history');
+    
     if (window.localStorage) {
         var elements = dojo.byId('login_form').elements;
         if(window.localStorage.getItem('name')){

@@ -51,23 +51,20 @@
         <div class="chat-history">
             <ul id="chat_history"></ul>
         </div>
-        <textarea value="" id="chat_content" contenteditable="true"  placeholder='ctrl+enter发送' ></textarea>
+        <textarea value="" id="chat_content"  placeholder='ctrl+enter发送' ></textarea>
         <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span>
-        <em>(最多<strong>180</strong>字)</em><button id="send_msg" title='ctrl+enter发送' >发 送</button>
+        <em>(最多<strong>180</strong>字)</em>
+        <button id="send_msg" title='ctrl+enter发送' >发 送</button>
+        <button id="copy_history">复制聊天记录</button>
      </div>
      <script>
         //todo:
-        //dock动画通知---图片切换
-        //消息通知优化---列表头像闪动
+        //消息通知优化
         //未联网时错误提示
         //搜索功能
         //列表拼音排序
         //表情
-        /*
-        Titanium.UI.setDockIcon('fetion.png'); //可以用于dock上提示消息数量---类似邮件客户端
-        setTimeout("Titanium.UI.setDockIcon('default_app_logo.png')",2000);
-        Titanium.UI.setBadge("9");//在dock图标上覆盖红色数字9提醒新消息数量. dock图标必须是透明png效果才好.
-        */
+        //导出聊天历史记录(到文件,邮件),服务器保存备份
      </script>
 
   </body>

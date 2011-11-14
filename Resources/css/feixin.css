@@ -15,7 +15,6 @@ input:not([type='checkbox']){
 #user_info{
     display:none;
     margin:5px 0px 5px 0px;
-    border: 1px solid #1693A5;
     width:310px;
 }
 ul{
@@ -26,7 +25,6 @@ ul{
     display:none;
     width:300px;
     height:710px;
-    border:solid 1px #1693A5;
     padding:5px;
     overflow-y:auto;
 }
@@ -75,12 +73,15 @@ li.chat-item-self{
     width:300px;
     height:423px;
     border: 1px solid #1693A5;
+    border-radius: 15px;
     position:absolute;
     top:72px;
 }
 #chat_content{
     width:294px;height:76px;
-    border-top:2px solid #1693A5;
+    border:2px solid #1693A5;
+    border-radius: 15px;
+    outline:none;
 }
 .chat-history{
     width:100%;
