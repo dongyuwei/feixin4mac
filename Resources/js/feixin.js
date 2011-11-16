@@ -167,6 +167,7 @@ dojo.addOnLoad(function () {
                                 //i是签名，nn是名称，mn手机号
                                 dom.parentNode.title = [item.Data.i, item.Data.mn, item.Data.uri].join(" ");
                                 me.contacts[item.Data.uid] = item.Data.nn  || item.Data.ln || item.Data.uid;
+                                me.update_contact_name(item.Data.uid,me.contacts[item.Data.uid]);
                                 if (item.Data.crc) {
                                     var img = document.createElement("img");
                                     me.icons[item.Data.uid] = img.src = me.template("http://webim.feixin.10086.cn/WebIM/GetPortrait.aspx?did=#{uid}&Size=3&Crc=#{crc}&mid=#{uid}", {
@@ -344,6 +345,7 @@ dojo.addOnLoad(function () {
             var tmpl = '<a  herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{nick}</a>\
 		    <span name="#{uid}" class="status-text"></span><img uid="#{uid}" class="new-msg-icon" src="../images/sun.gif"/>';
 		    var uid = contact.uid, nick = contact.nn || contact.ln || contact.uid;
+		    console.log(nick);
             dom.setAttribute('uid',uid);
             this.newMsgCount[uid] = 0;
             dom.innerHTML = this.template(tmpl, {
@@ -367,6 +369,11 @@ dojo.addOnLoad(function () {
                 list.appendChild(dom);
             }
         },
+        update_contact_name: function (uid,name) {
+            dojo.forEach(dojo.query('a[uid="UID"]'.replace('UID',uid),dojo.byId('contact_list')),function(item){
+                item.innerHTML = name;
+            });
+        },
         setBadge:function(number){
             if(number > 0){
                 Titanium.UI.setBadge(number.toString());
@@ -377,7 +384,7 @@ dojo.addOnLoad(function () {
         show_chat_dialog: function (to, name) {
             dojo.byId('left_panel').style.display = "none";
             dojo.byId('chatWindow').style.display = "block";
-            dojo.byId('peer').innerHTML = "和 " + name  + " 聊天中...";
+            dojo.byId('peer').innerHTML = "和 " + (this.contacts[to]||name)   + " 聊天中...";
             this.load_history(to);
 
             var content = dojo.byId('chat_content');
