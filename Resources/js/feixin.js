@@ -187,8 +187,9 @@ dojo.addOnLoad(function () {
                                 alert(msg);
                             }
                             me.save_history(item.Data.fromUid, msg);
-                            dojo.query('img[uid="UID"]'.replace('UID',item.Data.fromUid))[0].style.display = 'inline-block';
+                            
                             if(me.current_peer_uid != item.Data.fromUid){
+                                dojo.query('img[uid="UID"]'.replace('UID',item.Data.fromUid))[0].style.display = 'inline-block';
                                 me.newMsgCount[item.Data.fromUid] = me.newMsgCount[item.Data.fromUid] + 1;
                                 me.setBadge(++me.totalMsgCount);
                             }else{
