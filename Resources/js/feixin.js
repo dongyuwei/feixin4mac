@@ -164,10 +164,13 @@ dojo.addOnLoad(function () {
                                 if (me.status[item.Data.pb]) {
                                     dom.innerHTML = "  " + (item.Data.pd || me.status[item.Data.pb]||"");
                                 }
-                                //i是签名，nn是名称，mn手机号
+                                //i是签名，nn是名称，mn手机号;nn是用户自己名称，ln是备注名称
                                 dom.parentNode.title = [item.Data.i, item.Data.mn, item.Data.uri].join(" ");
-                                me.contacts[item.Data.uid] = item.Data.nn  || item.Data.ln || item.Data.uid;
-                                me.update_contact_name(item.Data.uid,me.contacts[item.Data.uid]);
+                                if(!me.contacts[item.Data.uid]){
+                                    me.contacts[item.Data.uid] = item.Data.ln || item.Data.nn  || item.Data.uid;
+                                }
+                                
+                                item.Data.ln && item.Data.ln !=="" && me.update_contact_name(item.Data.uid,item.Data.ln);
                                 if (item.Data.crc) {
                                     var img = document.createElement("img");
                                     me.icons[item.Data.uid] = img.src = me.template("http://webim.feixin.10086.cn/WebIM/GetPortrait.aspx?did=#{uid}&Size=3&Crc=#{crc}&mid=#{uid}", {
@@ -344,8 +347,8 @@ dojo.addOnLoad(function () {
             dom.className = "buddy";
             var tmpl = '<a  herf="javascript:void(0);" uid="#{uid}" uri="#{uri}">#{nick}</a>\
 		    <span name="#{uid}" class="status-text"></span><img uid="#{uid}" class="new-msg-icon" src="../images/sun.gif"/>';
-		    var uid = contact.uid, nick = contact.nn || contact.ln || contact.uid;
-		    console.log(nick);
+		    var uid = contact.uid, nick = contact.ln || contact.nn  || contact.uid;
+		    this.contacts[uid] = nick;
             dom.setAttribute('uid',uid);
             this.newMsgCount[uid] = 0;
             dom.innerHTML = this.template(tmpl, {
