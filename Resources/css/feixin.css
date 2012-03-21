@@ -1,6 +1,7 @@
 body {
     background:#EEEFEF;
     overflow:hidden;
+    -webkit-user-select: auto !important;
 }
 input:not([type='checkbox']){
     width:80%;
