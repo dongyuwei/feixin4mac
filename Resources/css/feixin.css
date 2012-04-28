@@ -109,3 +109,39 @@ img.new-msg-icon{
 #peer-status{
     position: absolute; right: 33px; top: 7px;
 }
+div.layer_face{
+    display: none;
+    background: white;
+    padding: 3px 7px 5px;
+    width: 342px;
+    position: absolute;
+    bottom:500px;
+    overflow: hidden;
+}
+div.layer_face ul{
+    overflow: hidden;
+    list-style: none outside;
+    margin: 0 0 0 3px;
+    padding: 0;
+    width: 348px;
+}
+div.layer_face ul li {
+    width: 26px;
+    height: 26px;
+    float: left;
+    margin: 5px 5px 0 0;
+    overflow: hidden;
+    border-top: 0;
+}
+div.layer_face ul li a{
+    cursor: pointer;
+    display: block;
+    border: 1px solid #DEDEDE;
+    height: 24px;
+}
+div.layer_face ul li a:hover{
+    cursor: pointer;
+    display: block;
+    border: 1px solid blue;
+    height: 24px;
+}

@@ -52,11 +52,175 @@
             <ul id="chat_history"></ul>
         </div>
         <textarea value="" id="chat_content"  placeholder='ctrl+enter发送' ></textarea>
-        <span><input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span>
+        
+        <span><button id="face">表情</button>
+            <input type="checkbox" id="chat_checkbox"><label for="chat_checkbox">发短信</label></span>
         <em>(最多<strong>180</strong>字)</em>
         <button id="send_msg" title='ctrl+enter发送' >发 送</button>
         <button id="copy_history">复制聊天记录</button>
      </div>
+
+     <div class="layer_face" id='layer_face'>
+        <ul>
+            <li>
+                <a href="#"><img title="微笑 :)" pattern=":)" src="images/emoticons/smile_regular.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="大笑 :d" pattern=":d" src="images/emoticons/smile_teeth.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="眨眼 ;)" pattern=";)" src="images/emoticons/smile_wink.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="惊讶 :-o" pattern=":-o" src="images/emoticons/smile_omg.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="吐舌笑脸 :p" pattern=":p" src="images/emoticons/smile_tongue.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="热烈的笑脸 (h)" pattern="(h)" src="images/emoticons/smile_shades.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="生气 :@" pattern=":@" src="images/emoticons/smile_angry.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="悲伤 :(" pattern=":(" src="images/emoticons/smile_sad.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="哭泣 :’(" pattern=":’(" src="images/emoticons/smile_cry.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="尴尬 :&quot;&gt;" pattern=":&quot;&gt;" src="images/emoticons/smile_embaressed.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="讽刺 ^o)" pattern="^o)" src="images/emoticons/smile_sarcastic.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="生病 :&amp;" pattern=":&amp;" src="images/emoticons/smile_sick.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="咬牙切齿 8o|" pattern="8o|" src="images/emoticons/smile_baringteeth.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="困 |o" pattern="|o" src="images/emoticons/smile_yawn.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="保密 :-#" pattern=":-#" src="images/emoticons/smile_zipit.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="转动的眼睛 8-)" pattern="8-)" src="images/emoticons/smile_eyeroll.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="沉睡的弯月 (s)" pattern="(s)" src="images/emoticons/moon.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="下雨 (st)" pattern="(st)" src="images/emoticons/cloud_rain.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="时钟 (o)" pattern="(o)" src="images/emoticons/clock.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="红心 (l)" pattern="(l)" src="images/emoticons/heart.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="破碎的心 (u)" pattern="(u)" src="images/emoticons/heart_broken.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="猫脸 (@)" pattern="(@)" src="images/emoticons/cat.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="狗脸 (&amp;)" pattern="(&amp;)" src="images/emoticons/dog.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="蜗牛 (sn)" pattern="(sn)" src="images/emoticons/snail.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="星星 (*)" pattern="(*)" src="images/emoticons/star.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="太阳 (#)" pattern="(#)" src="images/emoticons/sun.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="彩虹 (r)" pattern="(r)" src="images/emoticons/rainbow.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="左侧拥抱 ({)" pattern="({)" src="images/emoticons/hug_girl.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="右侧拥抱 (})" pattern="(})" src="images/emoticons/hug_dude.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="红唇 (k)" pattern="(k)" src="images/emoticons/kiss.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="红玫瑰 (f)" pattern="(f)" src="images/emoticons/rose.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="凋谢的玫瑰 (w)" pattern="(w)" src="images/emoticons/rose_wilted.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="礼品盒 (g)" pattern="(g)" src="images/emoticons/present.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="生日蛋糕 (^)" pattern="(^)" src="images/emoticons/cake.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="音乐 (8)" pattern="(8)" src="images/emoticons/music_note.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="灯泡 (i)" pattern="(i)" src="images/emoticons/lightbulb.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="想法 *-:)" pattern="*-:)" src="images/emoticons/smile_idea.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="咖啡 (c)" pattern="(c)" src="images/emoticons/coffee.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="雨伞 (um)" pattern="(um)" src="images/emoticons/umbrella.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="手机 (mp)" pattern="(mp)" src="images/emoticons/mobile.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="计算机 (co)" pattern="(co)" src="images/emoticons/computer.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="失望 :|" pattern=":|" src="images/emoticons/smile_whatchutalkingabout.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="困惑 :-/" pattern=":-/" src="images/emoticons/smile_confused.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="担心 :s" pattern=":s" src="images/emoticons/smile_worried.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="饮料 )-|" pattern=")-|" src="images/emoticons/smile_drink.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="高脚杯 (d)" pattern="(d)" src="images/emoticons/martini.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="天使 o:)" pattern="o:)" src="images/emoticons/smile_angle.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="沉思 :?" pattern=":?" src="images/emoticons/smile_thinking.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="太棒了 (y)" pattern="(y)" src="images/emoticons/smile_great.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="淘气 &gt;:)" pattern="&gt;:)" src="images/emoticons/smile_naughty.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="笨蛋、呆子 :b" pattern=":b" src="images/emoticons/smile_fool.png"></a>
+            </li>
+            <li>
+                <a href="#"><img title="戴着太阳镜 b)" pattern="b)" src="images/emoticons/smile_cool.png"></a>
+            </li>
+        </ul>
+    </div>
+
      <script>
         //todo:
         //消息通知优化

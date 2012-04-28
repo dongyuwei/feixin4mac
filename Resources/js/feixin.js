@@ -195,7 +195,7 @@ dojo.addOnLoad(function () {
                             if(me.current_peer_uid != item.Data.fromUid){
                                 dojo.query('img[uid="UID"]'.replace('UID',item.Data.fromUid))[0].style.display = 'inline-block';
                                 me.newMsgCount[item.Data.fromUid] = me.newMsgCount[item.Data.fromUid] + 1;
-                                me.setBadge(++me.totalMsgCount);
+                                me.set_badge(++me.totalMsgCount);
                             }else{
                                 me.show_chat_dialog(item.Data.fromUid, me.contacts[item.Data.fromUid] || item.Data.fromUid);
                             }
@@ -361,7 +361,7 @@ dojo.addOnLoad(function () {
                 this.current_peer_uid = uid;
                 dojo.query("img.new-msg-icon",dom)[0].style.display = "none";
                 this.totalMsgCount -= this.newMsgCount[uid];
-                this.setBadge(this.totalMsgCount);
+                this.set_badge(this.totalMsgCount);
                 this.newMsgCount[uid] = 0;
                 this.show_chat_dialog(contact.uid, nick);
                 dojo.byId('peer-status').innerHTML = this.buddyStatus[uid] ;
@@ -377,7 +377,7 @@ dojo.addOnLoad(function () {
                 item.innerHTML = name;
             });
         },
-        setBadge:function(number){
+        set_badge:function(number){
             if(number > 0){
                 Titanium.UI.setBadge(number.toString());
             }else{
@@ -463,6 +463,15 @@ dojo.addOnLoad(function () {
             var key = "web_fetion_" + this.current_peer_uid;
             Titanium.UI.Clipboard.setText((content = window.localStorage.getItem(key) || "").replace(/###/g,"\n"));
             notifier.notify('', "导出聊天记录:", '聊天记录已经复制到剪贴板!');
+        },
+        show_face:function(){
+            var layer = dojo.byId('layer_face');
+            layer.style.display = layer.style.display === 'block' ? 'none': 'block';
+            /*
+            var pos = dojo.position(dojo.byId('face'));
+            layer.style.top = pos.x + 'px';
+            layer.style.left = pos.y + 'px';
+            */
         }
     };
     
@@ -492,6 +501,14 @@ dojo.addOnLoad(function () {
     });
     
     dojo.connect(dojo.byId('copy_history'), 'click', WebFetion, 'copy_history');
+    dojo.connect(dojo.byId('face'), 'click', WebFetion, 'show_face');
+
+    dojo.query('.layer_face img').forEach(function(img){
+        img.onclick = function(){
+            dojo.byId('layer_face').style.display = 'none';
+            dojo.byId('chat_content').value += img.getAttribute('pattern');
+        };
+    });
     
     if (window.localStorage) {
         var elements = dojo.byId('login_form').elements;
