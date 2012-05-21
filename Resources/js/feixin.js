@@ -77,12 +77,13 @@ dojo.addOnLoad(function () {
                         this.get_personal_info();
                         break;
                     case 311://手机号码/飞信号码错误
-                    
+                         notifier.notify('','错误提示:','手机号码/飞信号码错误!');
                         break;
                     case 321://密码错误
-                    
+                        notifier.notify('','错误提示:','密码错误!');
                         break;
                     case 312://验证码错误
+                        notifier.notify('','错误提示:','验证码错误!请重新输入');
                         this.loadImage();//登陆失败就重新加载验证码图片
                         break;
                 }
