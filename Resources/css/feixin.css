@@ -145,3 +145,5 @@ div.layer_face ul li a:hover{
     border: 1px solid blue;
     height: 24px;
 }
+
+::selection { background: #fe57a1; } 
