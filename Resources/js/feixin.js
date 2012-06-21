@@ -60,7 +60,7 @@ dojo.addOnLoad(function () {
             dojo.stopEvent(e);
             var status = dojo.byId('login_form').elements['OnlineStatus'].checked ? '0' : '400';
             dojo.byId('set_status').value = status;
-            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{'OnlineStatus':status}), dojo.hitch(this, function (json,io) {
+            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{'OnlineStatus':status,'Ccp':this.dbc_to_sbc(dojo.byId('login_form').elements['Ccp'].value)}), dojo.hitch(this, function (json,io) {
                 window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
                 window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
                 switch(json.rc){
@@ -436,6 +436,12 @@ dojo.addOnLoad(function () {
         handles: [],
         trim: function (str) {
             return str.replace(/(\u3000|\s|\t)*$/gi, "").replace(/^(\u3000|\s|\t)*/gi, "");
+        },
+        //全角字转半角字
+        dbc_to_sbc :function(str){
+            return str.replace(/[\uff01-\uff5e]/g,function(a){
+                return String.fromCharCode(a.charCodeAt(0)-65248);
+            }).replace(/\u3000/g," ");
         },
         load_history: function (peer_uid) {
             dojo.byId('chat_history').innerHTML = "";
