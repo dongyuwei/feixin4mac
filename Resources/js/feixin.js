@@ -307,8 +307,18 @@ dojo.addOnLoad(function () {
                     console.error(arguments);
                 },
                 headers: dojo.mixin({ 
-                    "Content-Type":"application/x-www-form-urlencoded; charset=utf-8",
-                    'Referer' : 'https://webim.feixin.10086.cn/'
+                    'Accept':'application/json, text/javascript, */*'
+                    ,'Accept-Charset':'UTF-8,*;q=0.5'
+                    ,'Accept-Encoding':'gzip,deflate,sdch'
+                    ,'Accept-Language':'en-US,en;q=0.8'
+                    ,'Connection':'keep-alive'
+                    ,'Content-Type':'application/x-www-form-urlencoded'
+                    //"Content-Type":"application/x-www-form-urlencoded; charset=utf-8",
+                    ,'Referer' : 'https://webim.feixin.10086.cn/'
+                    ,'Host':'webim.feixin.10086.cn'
+                    ,'Origin':'https://webim.feixin.10086.cn'
+                    ,'Referer':'https://webim.feixin.10086.cn/login.aspx'
+                    ,'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.47 Safari/536.11'
                 },headers)
             });
 
