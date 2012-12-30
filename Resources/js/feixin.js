@@ -60,7 +60,13 @@ dojo.addOnLoad(function () {
             dojo.stopEvent(e);
             var status = dojo.byId('login_form').elements['OnlineStatus'].checked ? '0' : '400';
             dojo.byId('set_status').value = status;
-            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', dojo.mixin(dojo.formToObject('login_form'),{'OnlineStatus':status,'Ccp':this.dbc_to_sbc(dojo.byId('login_form').elements['Ccp'].value)}), dojo.hitch(this, function (json,io) {
+            this.post('https://webim.feixin.10086.cn/WebIM/Login.aspx', 
+                dojo.mixin(dojo.formToObject('login_form'),
+                {
+                    'OnlineStatus':status
+                    // ,'Ccp':this.dbc_to_sbc(dojo.byId('login_form').elements['Ccp'].value)
+                    ,'AccountType' : 1
+                }), dojo.hitch(this, function (json,io) {
                 window.localStorage.setItem('name', dojo.trim(dojo.byId('login_form').elements['UserName'].value));
                 window.localStorage.setItem('pwd', dojo.trim(dojo.byId('login_form').elements['Pwd'].value));
                 switch(json.rc){
@@ -497,7 +503,7 @@ dojo.addOnLoad(function () {
         dojo.stopEvent(e);
         WebFetion.login(e);
     });
-    WebFetion.loadImage();
+    // WebFetion.loadImage();
     dojo.connect(dojo.byId('login_code'), 'click', function(){
         WebFetion.loadImage();
     });
